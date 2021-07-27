@@ -1,7 +1,28 @@
 # Why document.ready is now async (JQuery 3.X):
 
 # Problem:
-When an error (ReferenceError or TypeError) is thrown from one of the handlers registered through $(docuement).ready() then all subsequent handler are not being invoked. i.e. even if document.ready is called again it won't fire ever again.
+When an error is thrown from one of the handlers registered through $(docuement).ready() then all subsequent handler are not being invoked. i.e. even if document.ready is called again it won't fire ever again.
+
+# Test Case
+
+try{
+$(document).ready(function(){
+    console.log("first ready hanlder invoked");
+    throw "Error";      // Error is thrown 
+});
+}catch(e){
+    console.log(e);
+}
+
+document.addEventListener("click", function(){
+    console.log("Add second ready handler");
+    $(document).ready(function(){         // This will never execute when running JQuery > 2.2
+        console.log("Second ready hanlder invoked");
+    });
+});
+
+
+The above code works fine with JQuery < 1.5 and Jquery 3.X and the other ready() inside "click" handler will be executed.
 
 # Context:
 The document-ready processing in jQuery has been powered by the jQuery.Deferred implementation since jQuery 1.6.
