@@ -1,0 +1,21 @@
+#Why document.ready is now async (JQuery 3.X):
+
+#Problem:
+When an error (ReferenceError or TypeError) is thrown from one of the handlers registered through $(docuement).ready() then all subsequent handler are not being invoked. i.e. even if document.ready is called again it won't fire ever again.
+
+#Context:
+The document-ready processing in jQuery has been powered by the jQuery.Deferred implementation since jQuery 1.6.
+
+The previous implementation (<1.5) would go through an array of function and call them sequentially and adding a function after the document is ready behaving in a similar fashion as of an async call.
+
+JQuery < 1.5 used to have try catch around the callbacks along with the  finally block to reset the "firing" flag (used to denoted if further events should be fired).
+
+In Version 2.X finally block was removed bcz IE7 considers it to be a bug i.e. you can't have a try{}finally{} which means you are forced to keep a catch{} block along with try{} and re-throwing in the catch ended up in losing the actual context of the original exception.
+
+#New Implementation:
+1. To resolve this, finally{} block has been restored again to ensure future callbacks are executed.
+2. In Jquery 3.x ready has been implemented with async capabilities. Since handlers now execute independently of each other, an exception or failure in one document-ready handler no longer prevents other document-ready handlers from running.
+
+
+
+
